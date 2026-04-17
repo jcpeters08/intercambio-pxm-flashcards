@@ -1,0 +1,1849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Intercambio PXM — Flashcards: The Book of Life</title>
+<style>
+  :root {
+    --purple: #4A0E4E;
+    --purple-dark: #2B0A2E;
+    --orange: #E8731A;
+    --gold: #F5C842;
+    --cream: #FFF8ED;
+    --ink: #2B0A2E;
+    --muted: #7a5a70;
+    --green: #3f8a4f;
+    --red: #c8343a;
+    --card-shadow: 0 14px 40px rgba(74, 14, 78, 0.22), 0 2px 6px rgba(0,0,0,0.08);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(circle at 10% 10%, rgba(245, 200, 66, 0.20), transparent 40%),
+      radial-gradient(circle at 90% 20%, rgba(232, 115, 26, 0.18), transparent 45%),
+      radial-gradient(circle at 50% 95%, rgba(74, 14, 78, 0.15), transparent 50%),
+      var(--cream);
+    overflow-x: hidden;
+  }
+
+  /* Dotted papel-picado-style background */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(circle, rgba(232, 115, 26, 0.10) 2px, transparent 3px),
+      radial-gradient(circle, rgba(74, 14, 78, 0.08) 2px, transparent 3px);
+    background-size: 48px 48px, 64px 64px;
+    background-position: 0 0, 24px 24px;
+    z-index: 0;
+  }
+
+  /* Papel picado banner at top */
+  .papel-picado {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow: hidden;
+    margin-bottom: -10px;
+  }
+  .papel-picado::before {
+    content: "";
+    position: absolute;
+    top: 6px;
+    left: 5%;
+    right: 5%;
+    height: 2px;
+    background: var(--purple-dark);
+    border-radius: 2px;
+  }
+  .flag {
+    width: 44px;
+    height: 54px;
+    margin: 4px 6px 0;
+    position: relative;
+    clip-path: polygon(
+      0% 0%, 100% 0%,
+      100% 70%,
+      85% 80%, 70% 65%, 55% 80%, 40% 65%, 25% 80%, 15% 70%,
+      0% 80%
+    );
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transform-origin: top center;
+    animation: sway 4s ease-in-out infinite;
+  }
+  .flag::after {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    background-image:
+      radial-gradient(circle, rgba(255,255,255,0.7) 2px, transparent 3px),
+      radial-gradient(circle, rgba(255,255,255,0.5) 1.5px, transparent 2.5px);
+    background-size: 12px 12px, 8px 8px;
+    background-position: 2px 2px, 6px 6px;
+  }
+  .flag:nth-child(odd) { animation-delay: -1s; }
+  .flag:nth-child(3n) { animation-delay: -2s; }
+  .flag-1 { background: var(--orange); }
+  .flag-2 { background: var(--gold); }
+  .flag-3 { background: var(--purple); }
+  .flag-4 { background: #d14a8f; }
+  .flag-5 { background: var(--orange); }
+  .flag-6 { background: var(--purple); }
+  .flag-7 { background: var(--gold); }
+  .flag-8 { background: #d14a8f; }
+  .flag-9 { background: var(--orange); }
+  @keyframes sway {
+    0%, 100% { transform: rotate(-2deg); }
+    50%      { transform: rotate(2deg); }
+  }
+
+  /* Floating marigold petals */
+  .petals {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+  }
+  .petal {
+    position: absolute;
+    top: -40px;
+    width: 22px;
+    height: 22px;
+    opacity: 0.55;
+    animation: fall linear infinite;
+  }
+  @keyframes fall {
+    0% { transform: translateY(-40px) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.6; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* Candle side decorations */
+  .candles {
+    position: fixed;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 1;
+    display: none;
+  }
+  @media (min-width: 1100px) {
+    .candles { display: block; }
+  }
+  .candle-left { left: 12px; }
+  .candle-right { right: 12px; }
+  .candle {
+    position: relative;
+    width: 60px;
+    height: 180px;
+  }
+  .candle-body {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 120px;
+    background: linear-gradient(180deg, var(--cream) 0%, #f0dbae 100%);
+    border-radius: 4px 4px 2px 2px;
+    box-shadow:
+      inset -6px 0 10px rgba(0,0,0,0.10),
+      inset 6px 0 10px rgba(255,255,255,0.35),
+      0 4px 12px rgba(0,0,0,0.15);
+  }
+  .candle-body::before {
+    content: "";
+    position: absolute;
+    top: 8px; left: 6px; right: 6px;
+    height: 2px;
+    background: rgba(74,14,78,0.3);
+    border-radius: 2px;
+  }
+  .candle-body::after {
+    content: "";
+    position: absolute;
+    top: 14px; left: 6px; right: 6px;
+    height: 2px;
+    background: rgba(232,115,26,0.4);
+    border-radius: 2px;
+  }
+  .wick {
+    position: absolute;
+    bottom: 118px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 8px;
+    background: #1a0a1e;
+  }
+  .flame {
+    position: absolute;
+    bottom: 124px;
+    left: 50%;
+    width: 14px;
+    height: 22px;
+    background: radial-gradient(ellipse at 50% 70%, #fff 0%, var(--gold) 30%, var(--orange) 70%, transparent 100%);
+    border-radius: 50% 50% 50% 50% / 70% 70% 30% 30%;
+    transform: translateX(-50%);
+    animation: flicker 1.2s ease-in-out infinite;
+    filter: drop-shadow(0 0 8px rgba(245, 200, 66, 0.8));
+  }
+  @keyframes flicker {
+    0%, 100% { transform: translateX(-50%) scale(1, 1) rotate(-1deg); opacity: 1; }
+    50%      { transform: translateX(-50%) scale(1.05, 1.08) rotate(2deg); opacity: 0.9; }
+  }
+
+  .app {
+    position: relative;
+    z-index: 2;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 6px 20px 40px;
+  }
+
+  header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 4px 16px;
+    border-bottom: 1.5px dashed rgba(74, 14, 78, 0.25);
+    position: relative;
+  }
+  header .title-block { flex: 1; min-width: 0; }
+  header .title-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 22px;
+    letter-spacing: 0.5px;
+    color: var(--purple);
+    text-transform: uppercase;
+  }
+  header .subtitle {
+    margin: 4px 0 0;
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 0.4px;
+  }
+  header .corner-icon {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    opacity: 0.9;
+  }
+  .mini-skull {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+  }
+  header .counter {
+    background: var(--purple);
+    color: var(--cream);
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    min-width: 96px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    box-shadow: 0 6px 16px rgba(74, 14, 78, 0.25);
+    flex-shrink: 0;
+  }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 16px 0;
+    align-items: center;
+  }
+  .controls .group {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .label {
+    font-size: 11px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 700;
+    margin-right: 4px;
+  }
+  .pill {
+    border: 1.5px solid rgba(74, 14, 78, 0.25);
+    background: rgba(255,255,255,0.6);
+    color: var(--purple);
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all .15s ease;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .pill:hover { border-color: var(--purple); transform: translateY(-1px); }
+  .pill.active {
+    background: var(--purple);
+    color: var(--cream);
+    border-color: var(--purple);
+    box-shadow: 0 4px 12px rgba(74, 14, 78, 0.3);
+  }
+  .pill.warm.active {
+    background: var(--orange);
+    border-color: var(--orange);
+    box-shadow: 0 4px 12px rgba(232, 115, 26, 0.3);
+  }
+  .pill.gold.active {
+    background: var(--gold);
+    color: var(--ink);
+    border-color: var(--gold);
+    box-shadow: 0 4px 12px rgba(245, 200, 66, 0.5);
+  }
+  .select {
+    border: 1.5px solid rgba(74, 14, 78, 0.25);
+    background: rgba(255,255,255,0.8);
+    color: var(--purple);
+    padding: 7px 10px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* Stage */
+  .stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 6px 0 24px;
+    position: relative;
+  }
+
+  .perspective {
+    perspective: 1200px;
+    width: 100%;
+    max-width: 480px;
+  }
+
+  .card {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    transform-style: preserve-3d;
+    transition: transform 0.55s cubic-bezier(0.4, 0.0, 0.2, 1);
+    cursor: pointer;
+    touch-action: pan-y;
+  }
+  .card.flipped { transform: rotateY(180deg); }
+
+  .face {
+    position: absolute;
+    inset: 0;
+    border-radius: 22px;
+    box-shadow: var(--card-shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 26px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  .face.front {
+    background: linear-gradient(135deg, #ffffff 0%, #fffaee 55%, #ffe9c2 100%);
+    border: 2px solid rgba(232, 115, 26, 0.35);
+  }
+  .face.back {
+    background: linear-gradient(135deg, var(--purple) 0%, #6c1769 55%, #8a2079 100%);
+    color: var(--cream);
+    transform: rotateY(180deg);
+    border: 2px solid rgba(245, 200, 66, 0.45);
+  }
+
+  /* Corner marigold decorations */
+  .corner {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    opacity: 0.35;
+    pointer-events: none;
+  }
+  .corner.tl { top: 6px; left: 6px; }
+  .corner.tr { top: 6px; right: 6px; transform: scaleX(-1); }
+  .corner.bl { bottom: 6px; left: 6px; transform: scaleY(-1); }
+  .corner.br { bottom: 6px; right: 6px; transform: scale(-1, -1); }
+
+  /* Skull watermark on back of card */
+  .back-skull {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.13;
+    pointer-events: none;
+  }
+  .back-skull svg { width: 70%; height: 70%; }
+
+  .segment-tag {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    padding: 5px 11px;
+    border-radius: 999px;
+    background: rgba(74, 14, 78, 0.12);
+    color: var(--purple);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    z-index: 2;
+  }
+  .back .segment-tag {
+    background: rgba(245, 200, 66, 0.25);
+    color: var(--gold);
+  }
+  .status-tag {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    padding: 5px 11px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    z-index: 2;
+  }
+  .status-tag.mastered { background: var(--gold); color: var(--ink); }
+  .status-tag.learning { background: var(--orange); color: var(--cream); }
+  .status-tag.new { background: rgba(74,14,78,0.15); color: var(--purple); }
+  .back .status-tag.new { background: rgba(255,255,255,0.2); color: var(--cream); }
+
+  .word {
+    font-size: clamp(28px, 6vw, 44px);
+    font-weight: 800;
+    line-height: 1.1;
+    margin: 0;
+    padding: 0 8px;
+    letter-spacing: 0.2px;
+    position: relative;
+    z-index: 1;
+  }
+  .hint {
+    margin-top: 16px;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    position: relative;
+    z-index: 1;
+  }
+  .back .hint { color: rgba(255, 248, 237, 0.65); }
+
+  .example {
+    margin-top: 18px;
+    font-size: 14px;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--cream);
+    max-width: 85%;
+    opacity: 0.92;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Navigation */
+  .nav {
+    margin-top: 22px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .nav-btn {
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(74, 14, 78, 0.3);
+    background: rgba(255,255,255,0.8);
+    color: var(--purple);
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .15s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+  }
+  .nav-btn:hover { border-color: var(--purple); background: var(--purple); color: var(--cream); }
+  .nav-btn.flip {
+    width: auto;
+    padding: 0 18px;
+    border-radius: 999px;
+    background: var(--gold);
+    color: var(--ink);
+    border-color: var(--gold);
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .nav-btn.flip:hover { background: var(--orange); color: var(--cream); border-color: var(--orange); }
+
+  .action-row {
+    margin-top: 14px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .action-btn {
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: all .15s ease;
+  }
+  .action-btn.mastered {
+    background: rgba(245, 200, 66, 0.2);
+    color: var(--ink);
+    border-color: var(--gold);
+  }
+  .action-btn.mastered:hover { background: var(--gold); }
+  .action-btn.learning {
+    background: rgba(232, 115, 26, 0.15);
+    color: var(--orange);
+    border-color: var(--orange);
+  }
+  .action-btn.learning:hover { background: var(--orange); color: var(--cream); }
+
+  /* Progress */
+  .progress-wrap {
+    margin-top: 18px;
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 700;
+    flex-wrap: wrap;
+  }
+  .progress-wrap .stat {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot.gold { background: var(--gold); }
+  .dot.orange { background: var(--orange); }
+  .dot.purple { background: var(--purple); opacity: 0.4; }
+
+  /* QUIZ MODE */
+  .quiz-card {
+    width: 100%;
+    max-width: 600px;
+    background: linear-gradient(135deg, #ffffff 0%, #fffaee 60%, #ffe9c2 100%);
+    border: 2px solid rgba(232, 115, 26, 0.4);
+    border-radius: 22px;
+    padding: 28px 24px;
+    box-shadow: var(--card-shadow);
+    position: relative;
+    overflow: hidden;
+  }
+  .quiz-card .back-skull { opacity: 0.06; }
+
+  .quiz-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 700;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 2;
+  }
+  .quiz-score {
+    display: inline-flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .quiz-score .tally {
+    display: inline-flex;
+    gap: 4px;
+    align-items: center;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-variant-numeric: tabular-nums;
+  }
+  .tally.right { background: rgba(63, 138, 79, 0.15); color: var(--green); }
+  .tally.wrong { background: rgba(200, 52, 58, 0.12); color: var(--red); }
+
+  .quiz-prompt {
+    text-align: center;
+    font-size: 12px;
+    letter-spacing: 1.3px;
+    text-transform: uppercase;
+    color: var(--purple);
+    font-weight: 800;
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 2;
+  }
+  .quiz-word {
+    text-align: center;
+    font-size: clamp(28px, 5.5vw, 42px);
+    font-weight: 800;
+    color: var(--ink);
+    line-height: 1.15;
+    margin: 0 0 22px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .quiz-choices {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    position: relative;
+    z-index: 2;
+  }
+  @media (min-width: 520px) {
+    .quiz-choices { grid-template-columns: 1fr 1fr; }
+  }
+
+  .choice {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.85);
+    border: 2px solid rgba(74, 14, 78, 0.2);
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .choice:hover:not(:disabled) {
+    border-color: var(--purple);
+    background: #fff;
+    transform: translateY(-1px);
+  }
+  .choice:disabled { cursor: default; }
+  .choice .letter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--purple);
+    color: var(--cream);
+    font-size: 13px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .choice.correct {
+    background: rgba(63, 138, 79, 0.15);
+    border-color: var(--green);
+    color: var(--green);
+  }
+  .choice.correct .letter { background: var(--green); }
+  .choice.wrong {
+    background: rgba(200, 52, 58, 0.12);
+    border-color: var(--red);
+    color: var(--red);
+  }
+  .choice.wrong .letter { background: var(--red); }
+  .choice.disabled-not-picked { opacity: 0.55; }
+
+  .quiz-timer {
+    margin-top: 16px;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(74, 14, 78, 0.12);
+    overflow: hidden;
+    position: relative;
+    z-index: 2;
+  }
+  .quiz-timer .bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--orange));
+    width: 100%;
+    transform-origin: left;
+  }
+  .quiz-controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 16px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 2;
+  }
+  .quiz-btn {
+    padding: 10px 18px;
+    border-radius: 999px;
+    border: 1.5px solid var(--purple);
+    background: rgba(255,255,255,0.7);
+    color: var(--purple);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.15s ease;
+  }
+  .quiz-btn:hover { background: var(--purple); color: var(--cream); }
+  .quiz-btn.primary {
+    background: var(--orange);
+    border-color: var(--orange);
+    color: var(--cream);
+  }
+  .quiz-btn.primary:hover {
+    background: var(--purple);
+    border-color: var(--purple);
+    color: var(--cream);
+  }
+
+  /* Results screen */
+  .results {
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 28px 24px;
+    background: linear-gradient(180deg, #ffffff 0%, #fffaee 100%);
+    border-radius: 22px;
+    box-shadow: var(--card-shadow);
+    border: 2px solid rgba(232, 115, 26, 0.35);
+    position: relative;
+    overflow: hidden;
+  }
+  .results .back-skull { opacity: 0.08; }
+  .results-header {
+    text-align: center;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 2;
+  }
+  .results-header h2 {
+    margin: 0;
+    color: var(--purple);
+    font-size: 24px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .results-header .msg {
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 14px;
+    font-style: italic;
+  }
+  .score-circle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 16px auto 24px;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--purple) 0%, #6c1769 100%);
+    color: var(--cream);
+    box-shadow: 0 12px 28px rgba(74,14,78,0.35);
+    border: 3px solid var(--gold);
+    position: relative;
+    z-index: 2;
+  }
+  .score-circle .num {
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .score-circle .of {
+    font-size: 12px;
+    letter-spacing: 1.2px;
+    opacity: 0.8;
+    margin-top: 4px;
+  }
+  .score-circle .pct {
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 1px;
+  }
+
+  .split {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    position: relative;
+    z-index: 2;
+  }
+  @media (min-width: 560px) {
+    .split { grid-template-columns: 1fr 1fr; }
+  }
+  .split .bucket {
+    background: rgba(255,255,255,0.75);
+    border-radius: 14px;
+    padding: 16px;
+    border: 1.5px solid rgba(74, 14, 78, 0.15);
+  }
+  .bucket.mastered { border-color: rgba(245, 200, 66, 0.55); background: rgba(245, 200, 66, 0.08); }
+  .bucket.learning { border-color: rgba(232, 115, 26, 0.45); background: rgba(232, 115, 26, 0.06); }
+  .bucket h3 {
+    margin: 0 0 10px;
+    font-size: 13px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--purple);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .bucket h3 .count {
+    background: var(--purple);
+    color: var(--cream);
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+  }
+  .bucket.mastered h3 .count { background: var(--gold); color: var(--ink); }
+  .bucket.learning h3 .count { background: var(--orange); color: var(--cream); }
+  .bucket ul {
+    margin: 0; padding: 0 0 0 4px;
+    list-style: none;
+    max-height: 260px;
+    overflow-y: auto;
+  }
+  .bucket li {
+    padding: 6px 0;
+    border-bottom: 1px dashed rgba(74, 14, 78, 0.12);
+    font-size: 14px;
+  }
+  .bucket li:last-child { border-bottom: none; }
+  .bucket li .es { font-weight: 700; color: var(--ink); }
+  .bucket li .en { color: var(--muted); font-style: italic; margin-left: 6px; font-size: 13px; }
+  .bucket.empty-state { text-align: center; color: var(--muted); font-style: italic; font-size: 13px; padding: 20px 16px; }
+
+  .results-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 22px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 2;
+  }
+
+  .keys {
+    margin-top: 22px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 0.6px;
+    position: relative;
+    z-index: 2;
+  }
+  .keys kbd {
+    display: inline-block;
+    padding: 2px 7px;
+    font-size: 10.5px;
+    font-weight: 700;
+    border-radius: 6px;
+    background: rgba(74, 14, 78, 0.08);
+    color: var(--purple);
+    border: 1px solid rgba(74, 14, 78, 0.25);
+    margin: 0 2px;
+  }
+
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 11px;
+    padding: 18px 0 8px;
+    letter-spacing: 0.6px;
+    position: relative;
+    z-index: 2;
+  }
+  footer .marigold-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 6px;
+    opacity: 0.7;
+  }
+  footer .marigold-row svg { width: 20px; height: 20px; }
+
+  /* Small screens */
+  @media (max-width: 520px) {
+    header h1 { font-size: 18px; }
+    header .corner-icon { width: 36px; height: 36px; }
+    header .counter { padding: 6px 10px; font-size: 13px; min-width: 80px; }
+    .papel-picado { height: 60px; }
+    .flag { width: 36px; height: 46px; margin: 4px 4px 0; }
+    .app { padding: 4px 14px 32px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Papel picado banner -->
+<div class="papel-picado" aria-hidden="true">
+  <div class="flag flag-1"></div>
+  <div class="flag flag-2"></div>
+  <div class="flag flag-3"></div>
+  <div class="flag flag-4"></div>
+  <div class="flag flag-5"></div>
+  <div class="flag flag-6"></div>
+  <div class="flag flag-7"></div>
+  <div class="flag flag-8"></div>
+  <div class="flag flag-9"></div>
+</div>
+
+<!-- Floating petals -->
+<div class="petals" id="petals" aria-hidden="true"></div>
+
+<!-- Side candles -->
+<div class="candles candle-left" aria-hidden="true">
+  <div class="candle">
+    <div class="candle-body"></div>
+    <div class="wick"></div>
+    <div class="flame"></div>
+  </div>
+</div>
+<div class="candles candle-right" aria-hidden="true">
+  <div class="candle">
+    <div class="candle-body"></div>
+    <div class="wick"></div>
+    <div class="flame"></div>
+  </div>
+</div>
+
+<div class="app">
+
+  <header>
+    <!-- Mariachi guitar icon (left corner) -->
+    <svg class="corner-icon" viewBox="0 0 64 64" aria-hidden="true">
+      <ellipse cx="32" cy="40" rx="18" ry="20" fill="#8B4513" stroke="#4A0E4E" stroke-width="1.5"/>
+      <ellipse cx="32" cy="26" rx="11" ry="14" fill="#8B4513" stroke="#4A0E4E" stroke-width="1.5"/>
+      <circle cx="32" cy="42" r="6" fill="#2B0A2E"/>
+      <rect x="30" y="2" width="4" height="18" fill="#6B3410" stroke="#4A0E4E" stroke-width="1"/>
+      <rect x="28" y="2" width="8" height="3" fill="#F5C842"/>
+      <line x1="30.5" y1="8" x2="30.5" y2="42" stroke="#F5C842" stroke-width="0.5"/>
+      <line x1="31.5" y1="8" x2="31.5" y2="42" stroke="#F5C842" stroke-width="0.5"/>
+      <line x1="32.5" y1="8" x2="32.5" y2="42" stroke="#F5C842" stroke-width="0.5"/>
+      <line x1="33.5" y1="8" x2="33.5" y2="42" stroke="#F5C842" stroke-width="0.5"/>
+    </svg>
+    <div class="title-block">
+      <div class="title-line">
+        <svg class="mini-skull" viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M16 2 C9 2 4 7 4 14 c0 4 2 7 4 9 v4 c0 1 1 2 2 2 h2 v-2 h1 v2 h2 v-2 h2 v2 h1 v-2 h2 c1 0 2 -1 2 -2 v-4 c2 -2 4 -5 4 -9 C28 7 23 2 16 2 Z" fill="#4A0E4E" stroke="#2B0A2E" stroke-width="0.5"/>
+          <circle cx="11" cy="14" r="3" fill="#FFF8ED"/>
+          <circle cx="21" cy="14" r="3" fill="#FFF8ED"/>
+          <circle cx="11" cy="14" r="1.2" fill="#E8731A"/>
+          <circle cx="21" cy="14" r="1.2" fill="#E8731A"/>
+          <path d="M14 19 L16 22 L18 19" fill="none" stroke="#FFF8ED" stroke-width="0.8"/>
+          <path d="M16 4 C14 4 12 5 12 6 M16 4 C18 4 20 5 20 6" stroke="#F5C842" stroke-width="1" fill="none"/>
+        </svg>
+        <h1>Intercambio PXM</h1>
+        <svg class="mini-skull" viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M16 2 C9 2 4 7 4 14 c0 4 2 7 4 9 v4 c0 1 1 2 2 2 h2 v-2 h1 v2 h2 v-2 h2 v2 h1 v-2 h2 c1 0 2 -1 2 -2 v-4 c2 -2 4 -5 4 -9 C28 7 23 2 16 2 Z" fill="#4A0E4E" stroke="#2B0A2E" stroke-width="0.5"/>
+          <circle cx="11" cy="14" r="3" fill="#FFF8ED"/>
+          <circle cx="21" cy="14" r="3" fill="#FFF8ED"/>
+          <circle cx="11" cy="14" r="1.2" fill="#E8731A"/>
+          <circle cx="21" cy="14" r="1.2" fill="#E8731A"/>
+          <path d="M14 19 L16 22 L18 19" fill="none" stroke="#FFF8ED" stroke-width="0.8"/>
+          <path d="M16 4 C14 4 12 5 12 6 M16 4 C18 4 20 5 20 6" stroke="#F5C842" stroke-width="1" fill="none"/>
+        </svg>
+      </div>
+      <p class="subtitle">Flashcards · <em>The Book of Life</em></p>
+    </div>
+    <!-- Bull icon (right corner) -->
+    <svg class="corner-icon" viewBox="0 0 64 64" aria-hidden="true">
+      <path d="M20 24 C14 14 8 12 6 14 c-1 3 3 8 8 10 Z" fill="#2B0A2E" stroke="#4A0E4E" stroke-width="1"/>
+      <path d="M44 24 C50 14 56 12 58 14 c1 3 -3 8 -8 10 Z" fill="#2B0A2E" stroke="#4A0E4E" stroke-width="1"/>
+      <ellipse cx="32" cy="36" rx="18" ry="16" fill="#4A0E4E" stroke="#2B0A2E" stroke-width="1.5"/>
+      <path d="M22 52 L26 58 M42 52 L38 58" stroke="#2B0A2E" stroke-width="2" fill="none"/>
+      <circle cx="25" cy="34" r="2.5" fill="#F5C842"/>
+      <circle cx="39" cy="34" r="2.5" fill="#F5C842"/>
+      <circle cx="25" cy="34" r="1" fill="#2B0A2E"/>
+      <circle cx="39" cy="34" r="1" fill="#2B0A2E"/>
+      <path d="M28 44 Q32 48 36 44" stroke="#E8731A" stroke-width="1.5" fill="none"/>
+      <circle cx="32" cy="44" r="1.5" fill="#E8731A"/>
+    </svg>
+    <div class="counter" id="counter">0 / 0</div>
+  </header>
+
+  <div class="controls">
+    <div class="group">
+      <span class="label">Mode</span>
+      <button class="pill active" data-mode="study" id="mode-study">Study</button>
+      <button class="pill gold" data-mode="quiz" id="mode-quiz">Quiz</button>
+    </div>
+    <div class="group">
+      <span class="label">Segment</span>
+      <button class="pill active" data-segment="all">All</button>
+      <button class="pill" data-segment="1">1 · La Apuesta</button>
+      <button class="pill" data-segment="2">2 · La Corrida</button>
+      <button class="pill" data-segment="3">3 · Los Recordados</button>
+    </div>
+    <div class="group">
+      <span class="label">Filter</span>
+      <button class="pill active" data-filter="all">All</button>
+      <button class="pill gold" data-filter="mastered">Mastered</button>
+      <button class="pill warm" data-filter="learning">Still learning</button>
+    </div>
+    <div class="group">
+      <span class="label">Dir</span>
+      <button class="pill active" data-dir="es-en">ES → EN</button>
+      <button class="pill" data-dir="en-es">EN → ES</button>
+    </div>
+    <div class="group" id="quiz-timer-group" style="display:none;">
+      <span class="label">Timer</span>
+      <select class="select" id="quiz-timer-select">
+        <option value="0">Off</option>
+        <option value="15">15s</option>
+        <option value="20" selected>20s</option>
+        <option value="30">30s</option>
+      </select>
+    </div>
+    <div class="group">
+      <button class="pill" id="shuffle-btn" title="Shuffle deck">Shuffle</button>
+    </div>
+  </div>
+
+  <!-- STUDY STAGE -->
+  <div class="stage" id="study-stage">
+    <div class="perspective">
+      <div class="card" id="card" tabindex="0" role="button" aria-label="Flashcard, press space to flip">
+        <div class="face front">
+          <!-- corner marigolds -->
+          <svg class="corner tl" viewBox="0 0 80 80" aria-hidden="true">
+            <g fill="#E8731A">
+              <circle cx="30" cy="30" r="6"/>
+              <circle cx="20" cy="22" r="5"/>
+              <circle cx="24" cy="14" r="4"/>
+              <circle cx="34" cy="16" r="4.5"/>
+              <circle cx="42" cy="22" r="5"/>
+              <circle cx="40" cy="34" r="4.5"/>
+              <circle cx="28" cy="40" r="4"/>
+              <circle cx="18" cy="34" r="4"/>
+            </g>
+            <circle cx="30" cy="27" r="3.5" fill="#F5C842"/>
+            <circle cx="30" cy="27" r="1.5" fill="#4A0E4E"/>
+          </svg>
+          <svg class="corner tr" viewBox="0 0 80 80" aria-hidden="true">
+            <g fill="#E8731A">
+              <circle cx="30" cy="30" r="6"/>
+              <circle cx="20" cy="22" r="5"/>
+              <circle cx="24" cy="14" r="4"/>
+              <circle cx="34" cy="16" r="4.5"/>
+              <circle cx="42" cy="22" r="5"/>
+              <circle cx="40" cy="34" r="4.5"/>
+              <circle cx="28" cy="40" r="4"/>
+              <circle cx="18" cy="34" r="4"/>
+            </g>
+            <circle cx="30" cy="27" r="3.5" fill="#F5C842"/>
+            <circle cx="30" cy="27" r="1.5" fill="#4A0E4E"/>
+          </svg>
+          <svg class="corner bl" viewBox="0 0 80 80" aria-hidden="true">
+            <g fill="#4A0E4E" opacity="0.7">
+              <circle cx="30" cy="30" r="6"/>
+              <circle cx="20" cy="22" r="5"/>
+              <circle cx="24" cy="14" r="4"/>
+              <circle cx="34" cy="16" r="4.5"/>
+              <circle cx="42" cy="22" r="5"/>
+              <circle cx="40" cy="34" r="4.5"/>
+              <circle cx="28" cy="40" r="4"/>
+              <circle cx="18" cy="34" r="4"/>
+            </g>
+            <circle cx="30" cy="27" r="3.5" fill="#F5C842"/>
+            <circle cx="30" cy="27" r="1.5" fill="#E8731A"/>
+          </svg>
+          <svg class="corner br" viewBox="0 0 80 80" aria-hidden="true">
+            <g fill="#4A0E4E" opacity="0.7">
+              <circle cx="30" cy="30" r="6"/>
+              <circle cx="20" cy="22" r="5"/>
+              <circle cx="24" cy="14" r="4"/>
+              <circle cx="34" cy="16" r="4.5"/>
+              <circle cx="42" cy="22" r="5"/>
+              <circle cx="40" cy="34" r="4.5"/>
+              <circle cx="28" cy="40" r="4"/>
+              <circle cx="18" cy="34" r="4"/>
+            </g>
+            <circle cx="30" cy="27" r="3.5" fill="#F5C842"/>
+            <circle cx="30" cy="27" r="1.5" fill="#E8731A"/>
+          </svg>
+          <span class="segment-tag" id="seg-tag-front"></span>
+          <span class="status-tag new" id="status-tag-front">New</span>
+          <p class="word" id="word-front">—</p>
+          <p class="hint" id="hint-front">Tap · Space · Click to flip</p>
+        </div>
+        <div class="face back">
+          <div class="back-skull" aria-hidden="true">
+            <svg viewBox="0 0 100 100">
+              <path d="M50 6 C28 6 14 20 14 42 c0 12 6 21 12 27 v14 c0 3 3 6 6 6 h5 v-6 h3 v6 h5 v-6 h5 v6 h3 v-6 h5 c3 0 6 -3 6 -6 V69 c6 -6 12 -15 12 -27 C86 20 72 6 50 6 Z"
+                fill="#FFF8ED" stroke="#F5C842" stroke-width="0.5"/>
+              <circle cx="34" cy="42" r="9" fill="#2B0A2E"/>
+              <circle cx="66" cy="42" r="9" fill="#2B0A2E"/>
+              <path d="M34 33 L34 51 M25 42 L43 42" stroke="#E8731A" stroke-width="2"/>
+              <path d="M66 33 L66 51 M57 42 L75 42" stroke="#E8731A" stroke-width="2"/>
+              <path d="M42 62 L50 70 L58 62" fill="#2B0A2E"/>
+              <circle cx="50" cy="22" r="3" fill="#E8731A"/>
+              <circle cx="42" cy="26" r="2" fill="#F5C842"/>
+              <circle cx="58" cy="26" r="2" fill="#F5C842"/>
+              <path d="M30 78 Q40 82 50 78 Q60 82 70 78" stroke="#4A0E4E" stroke-width="1.5" fill="none"/>
+            </svg>
+          </div>
+          <span class="segment-tag" id="seg-tag-back"></span>
+          <span class="status-tag new" id="status-tag-back">New</span>
+          <p class="word" id="word-back">—</p>
+          <p class="example" id="example-back">—</p>
+          <p class="hint" id="hint-back">Click · Space to flip back</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav">
+      <button class="nav-btn" id="prev" title="Previous (←)">‹</button>
+      <button class="nav-btn flip" id="flip-btn" title="Flip (Space)">Flip</button>
+      <button class="nav-btn" id="next" title="Next (→)">›</button>
+    </div>
+
+    <div class="action-row">
+      <button class="action-btn mastered" id="mark-mastered" title="Mark mastered (M)">★ Mastered</button>
+      <button class="action-btn learning" id="mark-learning" title="Still learning (L)">↻ Still learning</button>
+    </div>
+
+    <div class="progress-wrap">
+      <span class="stat"><span class="dot gold"></span><span id="stat-mastered">0</span> Mastered</span>
+      <span class="stat"><span class="dot orange"></span><span id="stat-learning">0</span> Still learning</span>
+      <span class="stat"><span class="dot purple"></span><span id="stat-new">0</span> New</span>
+    </div>
+
+    <div class="keys">
+      <kbd>←</kbd> prev · <kbd>→</kbd> next · <kbd>Space</kbd> flip · <kbd>M</kbd> mastered · <kbd>L</kbd> learning · <kbd>S</kbd> shuffle
+    </div>
+  </div>
+
+  <!-- QUIZ STAGE -->
+  <div class="stage" id="quiz-stage" style="display:none;">
+    <div class="quiz-card" id="quiz-card">
+      <div class="back-skull" aria-hidden="true">
+        <svg viewBox="0 0 100 100">
+          <path d="M50 6 C28 6 14 20 14 42 c0 12 6 21 12 27 v14 c0 3 3 6 6 6 h5 v-6 h3 v6 h5 v-6 h5 v6 h3 v-6 h5 c3 0 6 -3 6 -6 V69 c6 -6 12 -15 12 -27 C86 20 72 6 50 6 Z"
+            fill="#4A0E4E"/>
+          <circle cx="34" cy="42" r="9" fill="#FFF8ED"/>
+          <circle cx="66" cy="42" r="9" fill="#FFF8ED"/>
+          <path d="M42 62 L50 70 L58 62" fill="#FFF8ED"/>
+        </svg>
+      </div>
+      <div class="quiz-meta">
+        <span id="quiz-progress">Question 1 / 10</span>
+        <span class="quiz-score">
+          <span class="tally right">✓ <span id="quiz-right">0</span></span>
+          <span class="tally wrong">✗ <span id="quiz-wrong">0</span></span>
+        </span>
+      </div>
+      <div class="quiz-prompt" id="quiz-prompt">What does this mean?</div>
+      <h2 class="quiz-word" id="quiz-word">—</h2>
+      <div class="quiz-choices" id="quiz-choices"></div>
+      <div class="quiz-timer" id="quiz-timer-wrap" style="display:none;">
+        <div class="bar" id="quiz-timer-bar"></div>
+      </div>
+      <div class="quiz-controls">
+        <button class="quiz-btn" id="quiz-skip">Skip</button>
+        <button class="quiz-btn primary" id="quiz-next" style="display:none;">Next →</button>
+      </div>
+    </div>
+
+    <div class="keys" style="margin-top: 18px;">
+      <kbd>A</kbd> <kbd>B</kbd> <kbd>C</kbd> <kbd>D</kbd> or <kbd>1</kbd>–<kbd>4</kbd> to answer · <kbd>→</kbd> next · <kbd>S</kbd> skip
+    </div>
+  </div>
+
+  <!-- RESULTS STAGE -->
+  <div class="stage" id="results-stage" style="display:none;">
+    <div class="results">
+      <div class="back-skull" aria-hidden="true">
+        <svg viewBox="0 0 100 100">
+          <path d="M50 6 C28 6 14 20 14 42 c0 12 6 21 12 27 v14 c0 3 3 6 6 6 h5 v-6 h3 v6 h5 v-6 h5 v6 h3 v-6 h5 c3 0 6 -3 6 -6 V69 c6 -6 12 -15 12 -27 C86 20 72 6 50 6 Z"
+            fill="#4A0E4E"/>
+          <circle cx="34" cy="42" r="9" fill="#FFF8ED"/>
+          <circle cx="66" cy="42" r="9" fill="#FFF8ED"/>
+        </svg>
+      </div>
+      <div class="results-header">
+        <h2>¡Resultados!</h2>
+        <div class="msg" id="results-msg">—</div>
+      </div>
+      <div class="score-circle">
+        <div class="num"><span id="res-score">0</span>/<span id="res-total">0</span></div>
+        <div class="of">CORRECTAS</div>
+        <div class="pct" id="res-pct">0%</div>
+      </div>
+      <div class="split">
+        <div class="bucket mastered">
+          <h3>★ Mastered <span class="count" id="res-master-count">0</span></h3>
+          <ul id="res-master-list"></ul>
+        </div>
+        <div class="bucket learning">
+          <h3>↻ Still learning <span class="count" id="res-learn-count">0</span></h3>
+          <ul id="res-learn-list"></ul>
+        </div>
+      </div>
+      <div class="results-actions">
+        <button class="quiz-btn primary" id="res-quiz-learning">Quiz still learning</button>
+        <button class="quiz-btn" id="res-new-quiz">New quiz</button>
+        <button class="quiz-btn" id="res-back-study">Back to study</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="marigold-row" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" fill="#E8731A"/><circle cx="6" cy="10" r="3" fill="#E8731A"/><circle cx="18" cy="10" r="3" fill="#E8731A"/><circle cx="8" cy="16" r="3" fill="#E8731A"/><circle cx="16" cy="16" r="3" fill="#E8731A"/><circle cx="12" cy="12" r="2" fill="#F5C842"/></svg>
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" fill="#E8731A"/><circle cx="6" cy="10" r="3" fill="#E8731A"/><circle cx="18" cy="10" r="3" fill="#E8731A"/><circle cx="8" cy="16" r="3" fill="#E8731A"/><circle cx="16" cy="16" r="3" fill="#E8731A"/><circle cx="12" cy="12" r="2" fill="#F5C842"/></svg>
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" fill="#E8731A"/><circle cx="6" cy="10" r="3" fill="#E8731A"/><circle cx="18" cy="10" r="3" fill="#E8731A"/><circle cx="8" cy="16" r="3" fill="#E8731A"/><circle cx="16" cy="16" r="3" fill="#E8731A"/><circle cx="12" cy="12" r="2" fill="#F5C842"/></svg>
+    </div>
+    Para Jacob y la clase de Puerto Escondido · made with 🧡 for the Día de los Muertos
+  </footer>
+</div>
+
+<script>
+/* ====== VOCAB DATA ====== */
+const VOCAB = [
+  /* Segment 1 · La Apuesta (The Wager) */
+  { id: 1,  segment: 1, es: "la apuesta",       en: "the bet / wager",     example: "La Muerte y Xibalba hicieron una apuesta sobre el amor." },
+  { id: 2,  segment: 1, es: "el destino",       en: "destiny / fate",      example: "El destino de los tres amigos estaba escrito." },
+  { id: 3,  segment: 1, es: "el amor",          en: "love",                example: "El amor verdadero cruza los mundos." },
+  { id: 4,  segment: 1, es: "el héroe",         en: "the hero",            example: "Manolo quería ser un héroe sin matar toros." },
+  { id: 5,  segment: 1, es: "el valor",         en: "courage / bravery",   example: "Se necesita valor para seguir tu corazón." },
+  { id: 6,  segment: 1, es: "la tradición",     en: "tradition",           example: "La tradición familiar es torear." },
+  { id: 7,  segment: 1, es: "el corazón",       en: "the heart",           example: "Sigue siempre a tu corazón." },
+  { id: 8,  segment: 1, es: "la música",        en: "music",               example: "La música era la pasión verdadera de Manolo." },
+  { id: 9,  segment: 1, es: "la promesa",       en: "the promise",         example: "Manolo hizo una promesa a María." },
+  { id: 10, segment: 1, es: "el pueblo",        en: "the town / village",  example: "San Ángel es un pueblo muy tradicional." },
+
+  /* Segment 2 · La Corrida de Toros (The Bullfight) */
+  { id: 11, segment: 2, es: "el toro",          en: "the bull",            example: "El toro entró a la plaza con furia." },
+  { id: 12, segment: 2, es: "la plaza",         en: "the bullring / plaza",example: "La plaza estaba llena de gente." },
+  { id: 13, segment: 2, es: "la espada",        en: "the sword",           example: "Manolo dejó caer la espada." },
+  { id: 14, segment: 2, es: "la multitud",      en: "the crowd",           example: "La multitud gritó su nombre." },
+  { id: 15, segment: 2, es: "la vergüenza",     en: "shame / embarrassment",example: "Sintió vergüenza delante de su padre." },
+  { id: 16, segment: 2, es: "el orgullo",       en: "pride",               example: "El orgullo de la familia estaba en juego." },
+  { id: 17, segment: 2, es: "la decisión",      en: "the decision",        example: "Su decisión cambió su destino." },
+  { id: 18, segment: 2, es: "la canción",       en: "the song",            example: "Cantó una canción para el toro." },
+  { id: 19, segment: 2, es: "perdonar",         en: "to forgive",          example: "Decidió perdonar al toro." },
+  { id: 20, segment: 2, es: "luchar",           en: "to fight / struggle", example: "No quería luchar contra el animal." },
+
+  /* Segment 3 · Los Recordados (The Land of the Remembered) */
+  { id: 21, segment: 3, es: "el recuerdo",      en: "the memory",          example: "Los recuerdos mantienen vivos a los muertos." },
+  { id: 22, segment: 3, es: "recordar",         en: "to remember",         example: "Es importante recordar a nuestros seres queridos." },
+  { id: 23, segment: 3, es: "el alma",          en: "the soul",            example: "Su alma viajó a la Tierra de los Recordados." },
+  { id: 24, segment: 3, es: "la ofrenda",       en: "the altar / offering",example: "La familia puso una ofrenda el Día de Muertos." },
+  { id: 25, segment: 3, es: "la vela",          en: "the candle",          example: "Encendieron una vela para guiar las almas." },
+  { id: 26, segment: 3, es: "el cempasúchil",   en: "marigold flower",     example: "El cempasúchil guía a los muertos a casa." },
+  { id: 27, segment: 3, es: "la calavera",      en: "the skull",           example: "Las calaveras de azúcar son un símbolo." },
+  { id: 28, segment: 3, es: "el antepasado",    en: "the ancestor",        example: "Honramos a nuestros antepasados." },
+  { id: 29, segment: 3, es: "la familia",       en: "family",              example: "La familia está unida incluso después de la muerte." },
+  { id: 30, segment: 3, es: "la eternidad",     en: "eternity",            example: "En los Recordados vives una eternidad de fiesta." },
+];
+
+const SEGMENT_NAMES = {
+  1: "Seg 1 · La Apuesta",
+  2: "Seg 2 · La Corrida",
+  3: "Seg 3 · Los Recordados",
+};
+
+/* ====== STATE (in-memory only) ====== */
+const state = {
+  mode: "study",           // "study" | "quiz" | "results"
+  segment: "all",          // "all" | "1" | "2" | "3"
+  filter: "all",           // "all" | "mastered" | "learning"
+  direction: "es-en",      // "es-en" | "en-es"
+  idx: 0,
+  flipped: false,
+  deck: [],                // ordered list of card ids (study deck)
+  statusById: {},          // id -> "new" | "mastered" | "learning"
+  // Quiz state
+  quiz: {
+    deck: [],              // ordered list of card ids for this quiz
+    idx: 0,
+    right: 0,
+    wrong: 0,
+    answered: false,
+    currentChoices: [],
+    currentCorrectIdx: 0,
+    currentCardId: null,
+    results: [],           // [{id, correct}]
+    timerSeconds: 20,
+    timerTimeout: null,
+    timerInterval: null,
+    onlyLearning: false,
+  }
+};
+VOCAB.forEach(v => { state.statusById[v.id] = "new"; });
+
+/* ====== HELPERS ====== */
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function byId(id) { return VOCAB.find(v => v.id === id); }
+function filteredPool(ignoreFilter) {
+  return VOCAB.filter(v => {
+    if (state.segment !== "all" && String(v.segment) !== String(state.segment)) return false;
+    if (!ignoreFilter && state.filter !== "all" && state.statusById[v.id] !== state.filter) return false;
+    return true;
+  });
+}
+
+/* ====== STUDY DECK ====== */
+function buildStudyDeck(resetIdx = true) {
+  const pool = filteredPool(false);
+  state.deck = pool.map(v => v.id);
+  if (resetIdx) state.idx = 0;
+  state.flipped = false;
+  render();
+}
+
+/* ====== PETAL SPAWNING ====== */
+function spawnPetals() {
+  const host = document.getElementById("petals");
+  host.innerHTML = "";
+  const petalSVG = `<svg viewBox="0 0 24 24"><path d="M12 2 C8 4 5 7 5 11 C5 15 8 18 12 22 C16 18 19 15 19 11 C19 7 16 4 12 2 Z" fill="#E8731A" opacity="0.85"/><path d="M12 2 C10 5 9 8 9 11 C9 14 10 17 12 22 C14 17 15 14 15 11 C15 8 14 5 12 2 Z" fill="#F5C842"/></svg>`;
+  for (let i = 0; i < 14; i++) {
+    const p = document.createElement("div");
+    p.className = "petal";
+    p.innerHTML = petalSVG;
+    p.style.left = Math.random() * 100 + "vw";
+    p.style.animationDuration = (9 + Math.random() * 8) + "s";
+    p.style.animationDelay = (-Math.random() * 15) + "s";
+    p.style.transform = `scale(${0.6 + Math.random() * 0.8})`;
+    host.appendChild(p);
+  }
+}
+
+/* ====== RENDER — MODE ROUTER ====== */
+function render() {
+  document.getElementById("study-stage").style.display   = state.mode === "study"   ? "" : "none";
+  document.getElementById("quiz-stage").style.display    = state.mode === "quiz"    ? "" : "none";
+  document.getElementById("results-stage").style.display = state.mode === "results" ? "" : "none";
+  document.getElementById("quiz-timer-group").style.display = state.mode === "quiz" ? "" : "none";
+
+  if (state.mode === "study") renderStudy();
+  if (state.mode === "quiz") {
+    // always up-to-date counter row
+    document.getElementById("counter").textContent = `${Math.min(state.quiz.idx + 1, state.quiz.deck.length)} / ${state.quiz.deck.length}`;
+  }
+  updateStats();
+}
+
+/* ====== STUDY RENDER ====== */
+function renderStudy() {
+  const deck = state.deck;
+  const card = document.getElementById("card");
+  const counter = document.getElementById("counter");
+
+  if (!deck.length) {
+    counter.textContent = "0 / 0";
+    document.getElementById("word-front").textContent = "No cards match";
+    document.getElementById("hint-front").textContent = "Try a different filter or segment";
+    document.getElementById("word-back").textContent = "—";
+    document.getElementById("example-back").textContent = "";
+    document.getElementById("seg-tag-front").textContent = "";
+    document.getElementById("seg-tag-back").textContent = "";
+    setStatusTag("new");
+    card.classList.remove("flipped");
+    return;
+  }
+
+  if (state.idx >= deck.length) state.idx = deck.length - 1;
+  if (state.idx < 0) state.idx = 0;
+
+  const v = byId(deck[state.idx]);
+  counter.textContent = `${state.idx + 1} / ${deck.length}`;
+
+  const frontText = state.direction === "es-en" ? v.es : v.en;
+  const backText  = state.direction === "es-en" ? v.en : v.es;
+
+  document.getElementById("word-front").textContent = frontText;
+  document.getElementById("hint-front").textContent = "Tap · Space · Click to flip";
+  document.getElementById("word-back").textContent = backText;
+  document.getElementById("example-back").textContent = v.example || "";
+  document.getElementById("seg-tag-front").textContent = SEGMENT_NAMES[v.segment];
+  document.getElementById("seg-tag-back").textContent = SEGMENT_NAMES[v.segment];
+
+  setStatusTag(state.statusById[v.id]);
+  card.classList.toggle("flipped", !!state.flipped);
+}
+
+function setStatusTag(status) {
+  const tags = [document.getElementById("status-tag-front"), document.getElementById("status-tag-back")];
+  tags.forEach(t => {
+    t.classList.remove("new", "mastered", "learning");
+    t.classList.add(status);
+    if (status === "mastered") t.textContent = "★ Mastered";
+    else if (status === "learning") t.textContent = "↻ Learning";
+    else t.textContent = "New";
+  });
+}
+
+function updateStats() {
+  let m = 0, l = 0, n = 0;
+  VOCAB.forEach(v => {
+    const s = state.statusById[v.id];
+    if (s === "mastered") m++;
+    else if (s === "learning") l++;
+    else n++;
+  });
+  document.getElementById("stat-mastered").textContent = m;
+  document.getElementById("stat-learning").textContent = l;
+  document.getElementById("stat-new").textContent = n;
+}
+
+/* ====== STUDY NAVIGATION ====== */
+function nextCard() {
+  if (!state.deck.length) return;
+  state.flipped = false;
+  state.idx = (state.idx + 1) % state.deck.length;
+  renderStudy();
+}
+function prevCard() {
+  if (!state.deck.length) return;
+  state.flipped = false;
+  state.idx = (state.idx - 1 + state.deck.length) % state.deck.length;
+  renderStudy();
+}
+function flipCard() {
+  if (!state.deck.length) return;
+  state.flipped = !state.flipped;
+  document.getElementById("card").classList.toggle("flipped", state.flipped);
+}
+function markCurrent(status) {
+  if (!state.deck.length) return;
+  const id = state.deck[state.idx];
+  state.statusById[id] = status;
+  if (state.filter !== "all" && state.filter !== status) {
+    buildStudyDeck(false);
+  } else {
+    setStatusTag(status);
+  }
+  updateStats();
+}
+function shuffleDeck() {
+  if (state.mode === "study") {
+    state.deck = shuffle(state.deck);
+    state.idx = 0;
+    state.flipped = false;
+    renderStudy();
+  } else if (state.mode === "quiz") {
+    startQuiz({ onlyLearning: state.quiz.onlyLearning });
+  }
+}
+
+/* ====== QUIZ ====== */
+function startQuiz({ onlyLearning = false } = {}) {
+  clearQuizTimer();
+  state.quiz.onlyLearning = onlyLearning;
+  const pool = onlyLearning
+    ? VOCAB.filter(v => state.statusById[v.id] === "learning")
+    : filteredPool(true); // quiz ignores the "filter" pill — uses segment only
+
+  const ids = shuffle(pool.map(v => v.id));
+  if (!ids.length) {
+    alert("No cards available for quiz. Adjust segment filter or mark some as 'still learning'.");
+    setMode("study");
+    return;
+  }
+  state.quiz.deck = ids;
+  state.quiz.idx = 0;
+  state.quiz.right = 0;
+  state.quiz.wrong = 0;
+  state.quiz.results = [];
+  state.quiz.answered = false;
+  state.mode = "quiz";
+  state.quiz.timerSeconds = parseInt(document.getElementById("quiz-timer-select").value, 10) || 0;
+  render();
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion() {
+  const q = state.quiz;
+  if (q.idx >= q.deck.length) {
+    showResults();
+    return;
+  }
+
+  const card = byId(q.deck[q.idx]);
+  q.currentCardId = card.id;
+  q.answered = false;
+
+  // Decide direction: use current state.direction setting
+  const promptIsES = state.direction === "es-en";
+  const promptText = promptIsES ? card.es : card.en;
+  const correctText = promptIsES ? card.en : card.es;
+
+  // Build 3 distractors from other vocab (any segment)
+  const distractors = shuffle(
+    VOCAB.filter(v => v.id !== card.id).map(v => promptIsES ? v.en : v.es)
+  ).slice(0, 3);
+
+  // Place correct answer randomly
+  const choices = shuffle([correctText, ...distractors]);
+  q.currentChoices = choices;
+  q.currentCorrectIdx = choices.indexOf(correctText);
+
+  document.getElementById("quiz-progress").textContent = `Question ${q.idx + 1} / ${q.deck.length}`;
+  document.getElementById("quiz-right").textContent = q.right;
+  document.getElementById("quiz-wrong").textContent = q.wrong;
+  document.getElementById("quiz-prompt").textContent = promptIsES
+    ? "What does this mean? · ¿Qué significa?"
+    : "How do you say this in Spanish? · ¿Cómo se dice?";
+  document.getElementById("quiz-word").textContent = promptText;
+
+  const choicesHost = document.getElementById("quiz-choices");
+  choicesHost.innerHTML = "";
+  const letters = ["A", "B", "C", "D"];
+  choices.forEach((txt, i) => {
+    const btn = document.createElement("button");
+    btn.className = "choice";
+    btn.type = "button";
+    btn.dataset.idx = i;
+    btn.innerHTML = `<span class="letter">${letters[i]}</span><span class="txt">${txt}</span>`;
+    btn.addEventListener("click", () => answerQuiz(i, false));
+    choicesHost.appendChild(btn);
+  });
+
+  document.getElementById("quiz-next").style.display = "none";
+  document.getElementById("quiz-skip").style.display = "";
+
+  // Timer
+  const timerWrap = document.getElementById("quiz-timer-wrap");
+  const bar = document.getElementById("quiz-timer-bar");
+  clearQuizTimer();
+  if (q.timerSeconds > 0) {
+    timerWrap.style.display = "";
+    bar.style.transition = "none";
+    bar.style.transform = "scaleX(1)";
+    // Force reflow then start transition
+    void bar.offsetWidth;
+    bar.style.transition = `transform ${q.timerSeconds}s linear`;
+    bar.style.transform = "scaleX(0)";
+    q.timerTimeout = setTimeout(() => {
+      if (!q.answered) answerQuiz(-1, true); // timeout counts as skip
+    }, q.timerSeconds * 1000);
+  } else {
+    timerWrap.style.display = "none";
+  }
+
+  document.getElementById("counter").textContent = `${q.idx + 1} / ${q.deck.length}`;
+}
+
+function clearQuizTimer() {
+  if (state.quiz.timerTimeout) clearTimeout(state.quiz.timerTimeout);
+  state.quiz.timerTimeout = null;
+}
+
+function answerQuiz(chosenIdx, skipped) {
+  const q = state.quiz;
+  if (q.answered) return;
+  q.answered = true;
+  clearQuizTimer();
+
+  const buttons = document.querySelectorAll("#quiz-choices .choice");
+  buttons.forEach(b => b.disabled = true);
+
+  const correctIdx = q.currentCorrectIdx;
+  const isCorrect = !skipped && chosenIdx === correctIdx;
+
+  // Highlight buttons
+  buttons.forEach((b, i) => {
+    if (i === correctIdx) b.classList.add("correct");
+    else if (i === chosenIdx && !isCorrect) b.classList.add("wrong");
+    else b.classList.add("disabled-not-picked");
+  });
+
+  // Update score + status
+  const cardId = q.currentCardId;
+  if (isCorrect) {
+    q.right++;
+    state.statusById[cardId] = "mastered";
+  } else {
+    q.wrong++;
+    state.statusById[cardId] = "learning";
+  }
+  q.results.push({ id: cardId, correct: isCorrect });
+
+  document.getElementById("quiz-right").textContent = q.right;
+  document.getElementById("quiz-wrong").textContent = q.wrong;
+  document.getElementById("quiz-next").style.display = "";
+  document.getElementById("quiz-skip").style.display = "none";
+  updateStats();
+
+  // Freeze timer bar where it is
+  const bar = document.getElementById("quiz-timer-bar");
+  const rect = bar.getBoundingClientRect();
+  const wrapRect = document.getElementById("quiz-timer-wrap").getBoundingClientRect();
+  if (wrapRect.width > 0) {
+    const frac = Math.max(0, rect.width / wrapRect.width);
+    bar.style.transition = "none";
+    bar.style.transform = `scaleX(${frac})`;
+  }
+}
+
+function nextQuizQuestion() {
+  state.quiz.idx++;
+  renderQuizQuestion();
+}
+
+function showResults() {
+  state.mode = "results";
+  render();
+
+  const q = state.quiz;
+  const total = q.deck.length;
+  const score = q.right;
+  const pct = total ? Math.round((score / total) * 100) : 0;
+
+  document.getElementById("res-score").textContent = score;
+  document.getElementById("res-total").textContent = total;
+  document.getElementById("res-pct").textContent = pct + "%";
+
+  let msg = "";
+  if (pct >= 90) msg = "¡Excelente! You're ready to teach the class. 🌟";
+  else if (pct >= 75) msg = "¡Muy bien! You've got most of these down.";
+  else if (pct >= 50) msg = "¡Buen trabajo! Some more practice will seal it.";
+  else if (pct >= 25) msg = "¡Ánimo! Review the still-learning list and try again.";
+  else msg = "New territory — keep at it, one card at a time. 🧡";
+  document.getElementById("results-msg").textContent = msg;
+
+  const mastered = q.results.filter(r => r.correct).map(r => byId(r.id));
+  const learning = q.results.filter(r => !r.correct).map(r => byId(r.id));
+
+  const masterList = document.getElementById("res-master-list");
+  const learnList  = document.getElementById("res-learn-list");
+  masterList.innerHTML = "";
+  learnList.innerHTML  = "";
+
+  document.getElementById("res-master-count").textContent = mastered.length;
+  document.getElementById("res-learn-count").textContent  = learning.length;
+
+  if (!mastered.length) {
+    masterList.innerHTML = `<li style="color:var(--muted);font-style:italic;">Nothing mastered yet — don't give up!</li>`;
+  } else {
+    mastered.forEach(v => {
+      const li = document.createElement("li");
+      li.innerHTML = `<span class="es">${v.es}</span><span class="en">${v.en}</span>`;
+      masterList.appendChild(li);
+    });
+  }
+  if (!learning.length) {
+    learnList.innerHTML = `<li style="color:var(--muted);font-style:italic;">Nothing in still-learning — perfect score! 🎉</li>`;
+  } else {
+    learning.forEach(v => {
+      const li = document.createElement("li");
+      li.innerHTML = `<span class="es">${v.es}</span><span class="en">${v.en}</span>`;
+      learnList.appendChild(li);
+    });
+  }
+
+  // Enable/disable "Quiz still learning" button if nothing to quiz
+  document.getElementById("res-quiz-learning").disabled = !learning.length;
+  document.getElementById("res-quiz-learning").style.opacity = learning.length ? "1" : "0.5";
+
+  document.getElementById("counter").textContent = `${score} / ${total}`;
+}
+
+/* ====== MODE SWITCHING ====== */
+function setMode(mode) {
+  if (mode === state.mode) return;
+  if (mode === "study") {
+    clearQuizTimer();
+    state.mode = "study";
+    buildStudyDeck(false);
+    render();
+  } else if (mode === "quiz") {
+    startQuiz({ onlyLearning: false });
+  }
+  document.getElementById("mode-study").classList.toggle("active", state.mode === "study");
+  document.getElementById("mode-quiz").classList.toggle("active", state.mode === "quiz" || state.mode === "results");
+}
+
+/* ====== EVENT WIRING ====== */
+function wireControls() {
+  // Mode pills
+  document.getElementById("mode-study").addEventListener("click", () => setMode("study"));
+  document.getElementById("mode-quiz").addEventListener("click",  () => setMode("quiz"));
+
+  // Segment pills
+  document.querySelectorAll("[data-segment]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("[data-segment]").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      state.segment = btn.dataset.segment;
+      if (state.mode === "study") buildStudyDeck(true);
+    });
+  });
+
+  // Filter pills (study only)
+  document.querySelectorAll("[data-filter]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("[data-filter]").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      state.filter = btn.dataset.filter;
+      if (state.mode === "study") buildStudyDeck(true);
+    });
+  });
+
+  // Direction pills
+  document.querySelectorAll("[data-dir]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("[data-dir]").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      state.direction = btn.dataset.dir;
+      state.flipped = false;
+      if (state.mode === "study") renderStudy();
+      if (state.mode === "quiz") renderQuizQuestion();
+    });
+  });
+
+  // Shuffle
+  document.getElementById("shuffle-btn").addEventListener("click", shuffleDeck);
+
+  // Timer select
+  document.getElementById("quiz-timer-select").addEventListener("change", (e) => {
+    state.quiz.timerSeconds = parseInt(e.target.value, 10) || 0;
+    if (state.mode === "quiz" && !state.quiz.answered) {
+      // restart current question's timer with new value
+      renderQuizQuestion();
+    }
+  });
+
+  // STUDY nav
+  document.getElementById("next").addEventListener("click", nextCard);
+  document.getElementById("prev").addEventListener("click", prevCard);
+  document.getElementById("flip-btn").addEventListener("click", flipCard);
+  document.getElementById("card").addEventListener("click", flipCard);
+  document.getElementById("mark-mastered").addEventListener("click", (e) => { e.stopPropagation(); markCurrent("mastered"); });
+  document.getElementById("mark-learning").addEventListener("click", (e) => { e.stopPropagation(); markCurrent("learning"); });
+
+  // Swipe (study card)
+  const card = document.getElementById("card");
+  let touchStartX = 0, touchStartY = 0, touched = false;
+  card.addEventListener("touchstart", (e) => {
+    touched = true;
+    touchStartX = e.changedTouches[0].clientX;
+    touchStartY = e.changedTouches[0].clientY;
+  }, { passive: true });
+  card.addEventListener("touchend", (e) => {
+    if (!touched) return; touched = false;
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const dy = e.changedTouches[0].clientY - touchStartY;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+      if (dx < 0) nextCard(); else prevCard();
+    }
+  }, { passive: true });
+
+  // Quiz buttons
+  document.getElementById("quiz-skip").addEventListener("click", () => answerQuiz(-1, true));
+  document.getElementById("quiz-next").addEventListener("click", nextQuizQuestion);
+
+  // Results buttons
+  document.getElementById("res-new-quiz").addEventListener("click", () => startQuiz({ onlyLearning: false }));
+  document.getElementById("res-quiz-learning").addEventListener("click", () => startQuiz({ onlyLearning: true }));
+  document.getElementById("res-back-study").addEventListener("click", () => setMode("study"));
+
+  // Keyboard
+  document.addEventListener("keydown", (e) => {
+    const tag = (e.target.tagName || "").toUpperCase();
+    if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
+
+    if (state.mode === "study") {
+      if (e.key === "ArrowRight") { e.preventDefault(); nextCard(); }
+      else if (e.key === "ArrowLeft") { e.preventDefault(); prevCard(); }
+      else if (e.code === "Space") { e.preventDefault(); flipCard(); }
+      else if (e.key.toLowerCase() === "m") markCurrent("mastered");
+      else if (e.key.toLowerCase() === "l") markCurrent("learning");
+      else if (e.key.toLowerCase() === "s") shuffleDeck();
+    } else if (state.mode === "quiz") {
+      if (!state.quiz.answered) {
+        const letterMap = { a:0, b:1, c:2, d:3, "1":0, "2":1, "3":2, "4":3 };
+        const k = e.key.toLowerCase();
+        if (k in letterMap) {
+          e.preventDefault();
+          const i = letterMap[k];
+          if (i < state.quiz.currentChoices.length) answerQuiz(i, false);
+        } else if (k === "s") {
+          e.preventDefault();
+          answerQuiz(-1, true);
+        }
+      } else {
+        if (e.key === "ArrowRight" || e.key === "Enter" || e.code === "Space") {
+          e.preventDefault();
+          nextQuizQuestion();
+        }
+      }
+    } else if (state.mode === "results") {
+      if (e.key.toLowerCase() === "r") startQuiz({ onlyLearning: false });
+    }
+  });
+}
+
+/* ====== INIT ====== */
+spawnPetals();
+wireControls();
+buildStudyDeck(true);
+render();
+</script>
+
+</body>
+</html>
